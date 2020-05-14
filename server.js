@@ -16,7 +16,7 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { useNewUrlParser: true })
 
 // add new exercise
 app.put("/api/workouts/:id", (req, res) => {
@@ -45,6 +45,24 @@ app.post("/api/workouts", ({ body }, res) => {
     });
 });
 
+//get the workouts
+app.get("/api/workouts", (req, res) => {
+
+    db.Workout.find({}).then(dbWorkout => {
+        dbWorkout.forEach(workout => {
+            var addDuration = 0;
+            workout.exercises.forEach(exercise => {
+                addDuration += exercise.duration;
+            });
+            workout.totalDuration = addDuration;
+
+        });
+
+        res.json(dbWorkout);
+    }).catch(err => {
+        res.json(err);
+    });
+});
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "/public/index.html"));
@@ -57,7 +75,16 @@ app.get("/exercise", (req, res) => {
 app.get("/stats", (req, res) => {
     res.sendFile(path.join(__dirname + "/public/stats.html"));
 });
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}!`);
 });
+
+
+
+
+
+
+
