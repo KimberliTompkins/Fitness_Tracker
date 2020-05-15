@@ -21,9 +21,9 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { use
 // add new exercise
 app.put("/api/workouts/:id", (req, res) => {
     var workout = new db.Workout(req.body);
-
+    
     workout.incrementTotalDuration(req.body.duration);
-    console.log(req.body)
+
     db.Workout.findOneAndUpdate(
         { _id: req.params.id },
         {  $push: { exercises: req.body }},
