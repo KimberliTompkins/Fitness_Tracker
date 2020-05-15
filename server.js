@@ -20,10 +20,10 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { use
 
 // add new exercise
 app.put("/api/workouts/:id", (req, res) => {
-    //const workout = new Workout(req.body);
+    var workout = new db.Workout(req.body);
 
-    //workout.incrementTotalDuration(req.body.duration)
-
+    workout.incrementTotalDuration(req.body.duration);
+    console.log(req.body)
     db.Workout.findOneAndUpdate(
         { _id: req.params.id },
         {  $push: { exercises: req.body }},
@@ -62,6 +62,17 @@ app.get("/api/workouts", (req, res) => {
     }).catch(err => {
         res.json(err);
     });
+});
+
+// get workouts in range
+app.get("/api/workouts/range", (req, res) => {
+
+    db.Workout.find({}).then(dbWorkout => {
+        res.json(dbWorkout);
+    }).catch(err => {
+        res.json(err);
+    });
+
 });
 
 app.get("/", (req, res) => {
